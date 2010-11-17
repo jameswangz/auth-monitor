@@ -2,7 +2,7 @@ package com.snda.infrastructure.auth.monitor;
 
 import java.util.Date;
 
-public class AuthContext {
+public class AuthContext extends ValueObject {
 
 	private final String site;
 	private final String username;
@@ -14,4 +14,18 @@ public class AuthContext {
 		this.time = time;
 	}
 
+	public String site() {
+		return site;
+	}
+
+	public String username() {
+		return username;
+	}
+
+	public Date time() {
+		return time;
+	}
+
+	
+	
 }

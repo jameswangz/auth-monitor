@@ -1,6 +1,6 @@
 package com.snda.infrastructure.auth.monitor;
 
-public class AuthResult {
+public class AuthResult extends ValueObject {
 
 	private final AuthContext authContext;
 	private final AuthResultType resultType;

@@ -33,7 +33,7 @@ public class AuthMonitorConsoleTest {
 		when(qidianMonitor.execute()).thenReturn(authResult);
 		
 		console.start();
-		TimeUnit.SECONDS.sleep(10);
+		TimeUnit.SECONDS.sleep(60);
 		console.stop();
 
 		verify(persistenceListener, atLeastOnce()).onResult(authResult);
