@@ -23,7 +23,7 @@ public class AuthMonitorBootstrap {
 		Environment.initialize();
 		console.registerMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText()));
 		console.registerListener(new PersistenceListener()).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
-		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
+		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.FAILED);
 		console.schedulerAt($("cron"));
 		console.start();
 	}

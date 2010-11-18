@@ -29,7 +29,7 @@ public class EmailListener implements AuthListener {
 	public void onResult(AuthResult authResult) {
 		logger.error("Sending email to : " + Arrays.asList(receptionist) + ", content : " + authResult);
 		this.mailSender.send(messageOf(authResult));
-		logger.debug("Succesuffly sent mail to : " + Arrays.asList(receptionist));
+		logger.error("Succesuffly sent mail to : " + Arrays.asList(receptionist));
 	}
 
 	private SimpleMailMessage messageOf(AuthResult authResult) {
