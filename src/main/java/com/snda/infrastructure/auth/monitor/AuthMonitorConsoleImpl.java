@@ -1,21 +1,31 @@
 package com.snda.infrastructure.auth.monitor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
+
+import com.google.common.base.Throwables;
 
 public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 
+	public static final String MONITORS_KEY = "monitors";
+	public static final String LISTENERS_KEY = "listeners";
 	
-	private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	private SchedulerFactory schedFact = new StdSchedulerFactory();
+	private Scheduler scheduler;
 
 	private List<AuthMonitor> monitors = new ArrayList<AuthMonitor>();
 	private String cronExpression;
 	private List<ClassfiedAuthListenerBuilderImpl> builders = new ArrayList<ClassfiedAuthListenerBuilderImpl>();
 	private List<ClassfiedAuthListener> listeners = new ArrayList<ClassfiedAuthListener>();
-
 
 	@Override
 	public AuthMonitorConsole addMonitor(AuthMonitor monitor) {
@@ -40,9 +50,22 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 	@Override
 	public void start() {
 		buildListeners();
-		//FIXME use quartz instead of scheduler, otherwise cronExpression doesn't make sense
-//		scheduler.scheduleAtFixedRate(command(), 1, 30, TimeUnit.SECONDS);
-		command().run();
+		secheduleJob();
+	}
+
+	private void secheduleJob() {
+		try {
+			scheduler = schedFact.getScheduler();
+			scheduler.start();
+			JobDetail jobDetail = new JobDetail("kernal-job", "kernal-job-group", KernalJob.class);
+			jobDetail.getJobDataMap().put(MONITORS_KEY, monitors);
+			jobDetail.getJobDataMap().put(LISTENERS_KEY, listeners);
+			Trigger trigger = new CronTrigger("kernal-job-trigger", "kernal-job-trigger-group", cronExpression);
+			trigger.setStartTime(new Date());
+			scheduler.scheduleJob(jobDetail, trigger);
+		} catch (Exception e) {
+			Throwables.propagate(e);
+		}
 	}
 
 	private void buildListeners() {
@@ -52,29 +75,14 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 		}
 	}
 
-	private Runnable command() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				for (AuthMonitor monitor : monitors) {
-					try {
-						AuthResult result = monitor.execute();
-						for (ClassfiedAuthListener listener : listeners) {
-							if (listener.types().contains(result.resultType())) {
-								listener.authListener().onResult(result);
-							}
-						}	
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-	}
-
 	@Override
 	public void stop() {
-//		scheduler.shutdown();
+		try {
+			scheduler.shutdown();
+			scheduler = null;
+		} catch (SchedulerException e) {
+			Throwables.propagate(e);
+		}
 	}
 
 
