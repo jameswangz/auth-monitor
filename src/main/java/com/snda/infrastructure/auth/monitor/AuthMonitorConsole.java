@@ -2,9 +2,9 @@ package com.snda.infrastructure.auth.monitor;
 
 public interface AuthMonitorConsole {
 
-	AuthMonitorConsole addMonitor(AuthMonitor monitor);
+	AuthMonitorConsole registerMonitor(AuthMonitor monitor);
 	
-	ClassfiedAuthListenerBuilder addListener(AuthListener authListener);
+	ClassfiedAuthListenerBuilder registerListener(AuthListener authListener);
 
 	AuthMonitorConsole schedulerAt(String cronExpression);
 

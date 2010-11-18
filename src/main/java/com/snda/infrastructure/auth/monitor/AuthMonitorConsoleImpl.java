@@ -11,11 +11,15 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
 public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 
+	private static Logger logger = LoggerFactory.getLogger(AuthMonitorConsoleImpl.class);
+	
 	public static final String MONITORS_KEY = "monitors";
 	public static final String LISTENERS_KEY = "listeners";
 	
@@ -28,13 +32,13 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 	private List<ClassfiedAuthListener> listeners = new ArrayList<ClassfiedAuthListener>();
 
 	@Override
-	public AuthMonitorConsole addMonitor(AuthMonitor monitor) {
+	public AuthMonitorConsole registerMonitor(AuthMonitor monitor) {
 		this.monitors.add(monitor);
 		return this;
 	}
 	
 	@Override
-	public ClassfiedAuthListenerBuilder addListener(AuthListener authListener) {
+	public ClassfiedAuthListenerBuilder registerListener(AuthListener authListener) {
 		ClassfiedAuthListenerBuilderImpl classfiedAuthListenerBuilderImpl 
 			= new ClassfiedAuthListenerBuilderImpl(authListener);
 		this.builders.add(classfiedAuthListenerBuilderImpl);
@@ -64,6 +68,7 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 			trigger.setStartTime(new Date());
 			scheduler.scheduleJob(jobDetail, trigger);
 		} catch (Exception e) {
+			logger.error("Failed to start quartz job : " + e.getMessage(), e);
 			Throwables.propagate(e);
 		}
 	}

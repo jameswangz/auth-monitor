@@ -17,16 +17,12 @@ public final class KernalJob implements Job {
 		List<ClassfiedAuthListener> listeners = (List<ClassfiedAuthListener>) jobDataMap.get(AuthMonitorConsoleImpl.LISTENERS_KEY);
 		
 		for (AuthMonitor monitor : monitors) {
-			try {
-				AuthResult result = monitor.execute();
-				for (ClassfiedAuthListener listener : listeners) {
-					if (listener.types().contains(result.resultType())) {
-						listener.authListener().onResult(result);
-					}
-				}	
-			} catch (Exception e) {
-				throw new JobExecutionException(e);
-			}
+			AuthResult result = monitor.execute();
+			for (ClassfiedAuthListener listener : listeners) {
+				if (listener.types().contains(result.resultType())) {
+					listener.authListener().onResult(result);
+				}
+			}	
 		}
 	}
 	

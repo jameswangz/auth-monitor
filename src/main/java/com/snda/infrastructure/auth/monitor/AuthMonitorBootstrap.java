@@ -1,11 +1,11 @@
 package com.snda.infrastructure.auth.monitor;
 
+import static com.snda.infrastructure.auth.monitor.Environment.$;
+
 import java.util.Date;
-import java.util.Properties;
 
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
+import com.google.common.base.Splitter;
+import com.googlecode.functionalcollections.FunctionalIterables;
 import com.snda.infrastructure.auth.monitor.listener.EmailListener;
 import com.snda.infrastructure.auth.monitor.listener.PersistenceListener;
 import com.snda.infrastructure.auth.monitor.plugin.qidian.QidianSeleniumMonitor;
@@ -20,10 +20,11 @@ public class AuthMonitorBootstrap {
 	}
 	
 	public void start() {
-		console.addMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText()));
-		console.addListener(new PersistenceListener()).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
-		console.addListener(new EmailListener(mailSender(), from(), receptionist())).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
-		console.schedulerAt(cron());
+		Environment.initialize();
+		console.registerMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText()));
+		console.registerListener(new PersistenceListener()).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
+		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
+		console.schedulerAt($("cron"));
 		console.start();
 	}
 	
@@ -36,37 +37,19 @@ public class AuthMonitorBootstrap {
 	}
 
 	private SeleniumConfig seneniumConfig() {
-		return new SeleniumConfig("localhost", 4444, "*firefox");
+		return new SeleniumConfig($("selenium.server.host"), Integer.parseInt($("selenium.server.port")), "*firefox");
 	}
 	
 	private String expectedText() {
 		return "101116141742200";
 	}
 	
-	private String cron() {
-		return "0 0/1 * * * ?";
-	}
-
-	private JavaMailSender mailSender() {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost("61.172.242.14");
-		mailSender.setPort(25);
-		mailSender.setUsername("");
-		mailSender.setPassword("");
-		Properties javaMailProperties = new Properties();
-		javaMailProperties.setProperty("mail.smtp.auth", "true");
-		javaMailProperties.setProperty("mail.smtp.timeout", "25000");
-//		javaMailProperties.setProperty("mail.smtp.starttls.enable", "true");
-		mailSender.setJavaMailProperties(javaMailProperties);
-		return mailSender;
-	}
-	
 	private String from() {
-		return "noreply@snda.com";
+		return $("mail.from.address");
 	}
 	
 	private String[] receptionist() {
-		return new String[] {"java2enterprise@gmail.com", "wangzheng.james@snda.com"};
+		return FunctionalIterables.make(Splitter.on(",").split($("mail.to.addresses"))).toArray(String.class);
 	}
 	
 }

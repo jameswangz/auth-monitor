@@ -17,12 +17,12 @@ public class AuthMonitorConsoleTest {
 	public void test() throws InterruptedException {
 		AuthMonitorConsole console = new AuthMonitorConsoleImpl();
 		AuthMonitor qidianMonitor = mock(AuthMonitor.class);
-		console.addMonitor(qidianMonitor);
+		console.registerMonitor(qidianMonitor);
 		AuthListener persistenceListener = mock(AuthListener.class);
 		AuthListener emailListener = mock(AuthListener.class);
-		console.addListener(persistenceListener).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
-		console.addListener(emailListener).on(AuthResultType.FAILED);
-		console.schedulerAt("0/2 * * * * ?");
+		console.registerListener(persistenceListener).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
+		console.registerListener(emailListener).on(AuthResultType.FAILED);
+		console.schedulerAt("0/1 * * * * ?");
 		
 		AuthResult authResult = new AuthResult(
 			new AuthContext("http://www.qidian.com/", "sdotracker2010", "******", new Date()),
@@ -33,7 +33,7 @@ public class AuthMonitorConsoleTest {
 		when(qidianMonitor.execute()).thenReturn(authResult);
 		
 		console.start();
-		TimeUnit.SECONDS.sleep(30);
+		TimeUnit.SECONDS.sleep(5);
 		console.stop();
 
 		verify(persistenceListener, atLeastOnce()).onResult(authResult);
