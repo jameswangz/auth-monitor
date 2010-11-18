@@ -9,7 +9,6 @@ import com.snda.infrastructure.auth.monitor.AuthContext;
 import com.snda.infrastructure.auth.monitor.AuthMonitor;
 import com.snda.infrastructure.auth.monitor.AuthResult;
 import com.snda.infrastructure.auth.monitor.AuthResultType;
-import com.snda.infrastructure.auth.monitor.UsernamePassword;
 import com.snda.infrastructure.auth.monitor.selenium.SeleniumConfig;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
@@ -19,20 +18,19 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 
 	private static Logger logger = LoggerFactory.getLogger(QidianSeleniumMonitor.class);
 	
-	private final UsernamePassword usernamePassword;
-	private final SeleniumConfig seleniumConfig;
+	private final AuthContext authContext;
 	private final Selenium selenium;
 	private final String expectedText;
 
-	public QidianSeleniumMonitor(UsernamePassword usernamePassword, SeleniumConfig seleniumConfig, String expectedText) {
-		this.usernamePassword = usernamePassword;
-		this.seleniumConfig = seleniumConfig;
+	public QidianSeleniumMonitor(AuthContext authContext, SeleniumConfig seleniumConfig, String expectedText) {
+		this.authContext = authContext;
 		this.selenium = new DefaultSelenium(
 			seleniumConfig.serverHost(), 
 			seleniumConfig.serverPort(), 
 			seleniumConfig.browserStartCommand(), 
-			seleniumConfig.browserURL()
+			authContext.site()
 		);
+		this.selenium.setSpeed("2000");
 		this.expectedText = expectedText;
 	}
 
@@ -43,16 +41,19 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		selenium.start();
 		
 		selenium.open("/");
-		selenium.type("ptname", usernamePassword.username());
-		selenium.type("ptpwd", usernamePassword.password());
+		selenium.type("ptname", authContext.username());
+		selenium.type("ptpwd", authContext.password());
 		selenium.click("btn_user_login");
 		
 		boolean success = false;
 		String detail = null;
-		
 		try {
 			selenium.waitForPageToLoad("30000");
 			success = selenium.isTextPresent(expectedText);
+			if (success) {
+				selenium.click("link=ÍË³ö");
+				selenium.waitForPageToLoad("30000");
+			}
 		} catch (SeleniumException e) {
 			logger.error(e.getMessage(), e);
 			success = false;
@@ -65,7 +66,10 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		
 		selenium.stop();
 		
-		AuthContext authContext = new AuthContext(seleniumConfig.serverHost(), usernamePassword.username(), time);
+		return authResultOf(time, success, detail);
+	}
+
+	private AuthResult authResultOf(Date time, boolean success, String detail) {
 		AuthResultType resultType = success ? AuthResultType.SUCCESS : AuthResultType.FAILED;
 		return new AuthResult(authContext, resultType, detail);
 	}

@@ -5,13 +5,11 @@ public class SeleniumConfig {
 	private final String serverHost;
 	private final int serverPort;
 	private final String browserStartCommand;
-	private final String browserURL;
 
-	public SeleniumConfig(String serverHost, int serverPort, String browserStartCommand, String browserURL) {
+	public SeleniumConfig(String serverHost, int serverPort, String browserStartCommand) {
 		this.serverHost = serverHost;
 		this.serverPort = serverPort;
 		this.browserStartCommand = browserStartCommand;
-		this.browserURL = browserURL;
 	}
 
 	public String serverHost() {
@@ -26,8 +24,4 @@ public class SeleniumConfig {
 		return browserStartCommand;
 	}
 
-	public String browserURL() {
-		return browserURL;
-	}
-	
 }

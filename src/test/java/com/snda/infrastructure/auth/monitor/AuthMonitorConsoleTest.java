@@ -25,7 +25,7 @@ public class AuthMonitorConsoleTest {
 		console.schedulerAt("0/2 * * * * ?");
 		
 		AuthResult authResult = new AuthResult(
-			new AuthContext("http://www.qidian.com/", "sdotracker2010", new Date()),
+			new AuthContext("http://www.qidian.com/", "sdotracker2010", "******", new Date()),
 			AuthResultType.FAILED,
 			"Timed out"
 		);
@@ -33,7 +33,7 @@ public class AuthMonitorConsoleTest {
 		when(qidianMonitor.execute()).thenReturn(authResult);
 		
 		console.start();
-		TimeUnit.SECONDS.sleep(60);
+		TimeUnit.SECONDS.sleep(30);
 		console.stop();
 
 		verify(persistenceListener, atLeastOnce()).onResult(authResult);

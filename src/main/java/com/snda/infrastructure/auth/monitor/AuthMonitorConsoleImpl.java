@@ -41,7 +41,8 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 	public void start() {
 		buildListeners();
 		//FIXME use quartz instead of scheduler, otherwise cronExpression doesn't make sense
-		scheduler.scheduleAtFixedRate(command(), 1, 30, TimeUnit.SECONDS);
+//		scheduler.scheduleAtFixedRate(command(), 1, 30, TimeUnit.SECONDS);
+		command().run();
 	}
 
 	private void buildListeners() {
@@ -73,7 +74,7 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 
 	@Override
 	public void stop() {
-		scheduler.shutdown();
+//		scheduler.shutdown();
 	}
 
 
