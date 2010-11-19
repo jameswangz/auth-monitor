@@ -51,7 +51,7 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 			selenium.waitForPageToLoad("30000");
 			success = selenium.isTextPresent(expectedText);
 			if (success) {
-				selenium.click("link=ÍË³ö");
+				selenium.click("link=é€€å‡º");
 				selenium.waitForPageToLoad("30000");
 			}
 		} catch (SeleniumException e) {
