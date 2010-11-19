@@ -44,11 +44,11 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 			selenium.type("ptname", authContext.username());
 			selenium.type("ptpwd", authContext.password());
 			selenium.click("btn_user_login");
-			selenium.waitForPageToLoad("30000");
+			selenium.waitForPageToLoad("50000");
 			success = selenium.isTextPresent(expectedText);
 			if (success) {
 				selenium.click("link=退出");
-				selenium.waitForPageToLoad("30000");
+				selenium.waitForPageToLoad("50000");
 			}
 		} catch (SeleniumException e) {
 			logger.error(e.getMessage(), e);

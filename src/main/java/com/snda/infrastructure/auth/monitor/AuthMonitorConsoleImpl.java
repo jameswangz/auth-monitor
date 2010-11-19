@@ -61,10 +61,10 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 		try {
 			scheduler = schedFact.getScheduler();
 			scheduler.start();
-			JobDetail jobDetail = new JobDetail("kernal-job", "kernal-job-group", KernelJob.class);
+			JobDetail jobDetail = new JobDetail("kernel-job", "kernel-job-group", KernelJob.class);
 			jobDetail.getJobDataMap().put(MONITORS_KEY, monitors);
 			jobDetail.getJobDataMap().put(LISTENERS_KEY, listeners);
-			Trigger trigger = new CronTrigger("kernal-job-trigger", "kernal-job-trigger-group", cronExpression);
+			Trigger trigger = new CronTrigger("kernel-job-trigger", "kernel-job-trigger-group", cronExpression);
 			trigger.setStartTime(new Date());
 			scheduler.scheduleJob(jobDetail, trigger);
 		} catch (Exception e) {
