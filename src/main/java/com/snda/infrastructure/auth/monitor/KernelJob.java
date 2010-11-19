@@ -7,7 +7,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-public final class KernalJob implements Job {
+public final class KernelJob implements Job {
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -15,14 +15,17 @@ public final class KernalJob implements Job {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
 		List<AuthMonitor> monitors = (List<AuthMonitor>) jobDataMap.get(AuthMonitorConsoleImpl.MONITORS_KEY);
 		List<ClassfiedAuthListener> listeners = (List<ClassfiedAuthListener>) jobDataMap.get(AuthMonitorConsoleImpl.LISTENERS_KEY);
-		
-		for (AuthMonitor monitor : monitors) {
-			AuthResult result = monitor.execute();
-			for (ClassfiedAuthListener listener : listeners) {
-				if (listener.types().contains(result.resultType())) {
-					listener.authListener().onResult(result);
-				}
-			}	
+		try {
+			for (AuthMonitor monitor : monitors) {
+				AuthResult result = monitor.execute();
+				for (ClassfiedAuthListener listener : listeners) {
+					if (listener.types().contains(result.resultType())) {
+						listener.authListener().onResult(result);
+					}
+				}	
+			}
+		} catch (RuntimeException e) {
+			throw new JobExecutionException(e);
 		}
 	}
 	

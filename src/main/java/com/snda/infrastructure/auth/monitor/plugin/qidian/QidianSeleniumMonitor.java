@@ -1,7 +1,5 @@
 package com.snda.infrastructure.auth.monitor.plugin.qidian;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,18 +34,16 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 
 	@Override
 	public AuthResult execute() {
-		Date time = new Date();
-		
 		selenium.start();
-		
-		selenium.open("/");
-		selenium.type("ptname", authContext.username());
-		selenium.type("ptpwd", authContext.password());
-		selenium.click("btn_user_login");
 		
 		boolean success = false;
 		String detail = null;
+		
 		try {
+			selenium.open("/");
+			selenium.type("ptname", authContext.username());
+			selenium.type("ptpwd", authContext.password());
+			selenium.click("btn_user_login");
 			selenium.waitForPageToLoad("30000");
 			success = selenium.isTextPresent(expectedText);
 			if (success) {
@@ -66,10 +62,10 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		
 		selenium.stop();
 		
-		return authResultOf(time, success, detail);
+		return authResultOf(success, detail);
 	}
 
-	private AuthResult authResultOf(Date time, boolean success, String detail) {
+	private AuthResult authResultOf(boolean success, String detail) {
 		AuthResultType resultType = success ? AuthResultType.SUCCESS : AuthResultType.FAILED;
 		return new AuthResult(authContext, resultType, detail);
 	}
