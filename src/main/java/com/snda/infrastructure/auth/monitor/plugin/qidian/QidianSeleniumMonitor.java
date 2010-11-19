@@ -1,5 +1,7 @@
 package com.snda.infrastructure.auth.monitor.plugin.qidian;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 
 	@Override
 	public AuthResult execute() {
+		Date time = new Date();
 		selenium.start();
 		
 		boolean success = false;
@@ -62,12 +65,12 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		
 		selenium.stop();
 		
-		return authResultOf(success, detail);
+		return authResultOf(time, success, detail);
 	}
 
-	private AuthResult authResultOf(boolean success, String detail) {
+	private AuthResult authResultOf(Date time, boolean success, String detail) {
 		AuthResultType resultType = success ? AuthResultType.SUCCESS : AuthResultType.FAILED;
-		return new AuthResult(authContext, resultType, detail);
+		return new AuthResult(authContext, time, resultType, detail);
 	}
 
 }

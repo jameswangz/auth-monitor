@@ -45,7 +45,7 @@ public class EmailListener implements AuthListener {
 				"detail message [ %s ], please fix it asap, thanks. \n\n" +
 				"---------------------------------------------------------- \n\n ",
 				authResult.authContext().site(), 
-				df().format(authResult.authContext().time()), 
+				df().format(authResult.time()), 
 				authResult.detail()
 			)
 		);

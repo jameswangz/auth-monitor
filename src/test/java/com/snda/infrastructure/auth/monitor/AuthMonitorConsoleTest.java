@@ -25,7 +25,8 @@ public class AuthMonitorConsoleTest {
 		console.schedulerAt("0/1 * * * * ?");
 		
 		AuthResult authResult = new AuthResult(
-			new AuthContext("http://www.qidian.com/", "sdotracker2010", "******", new Date()),
+			new AuthContext("http://www.qidian.com/", "sdotracker2010", "******"),
+			new Date(), 
 			AuthResultType.FAILED,
 			"Timed out"
 		);
