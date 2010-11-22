@@ -2,8 +2,6 @@ package com.snda.infrastructure.auth.monitor;
 
 import static com.snda.infrastructure.auth.monitor.Environment.$;
 
-import java.util.Date;
-
 import com.google.common.base.Splitter;
 import com.googlecode.functionalcollections.FunctionalIterables;
 import com.snda.infrastructure.auth.monitor.listener.EmailListener;

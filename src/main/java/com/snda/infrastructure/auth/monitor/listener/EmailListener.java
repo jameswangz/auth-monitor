@@ -36,20 +36,16 @@ public class EmailListener implements AuthListener {
 		SimpleMailMessage simpleMessage = new SimpleMailMessage();
 		simpleMessage.setFrom(from);
 		simpleMessage.setTo(receptionist);
-		simpleMessage.setSubject("Error notification from snda auth monitor");
-		simpleMessage.setText(
-			String.format(
-				"This is a notification from snda auth monitor : \n\n " +
-				"---------------------------------------------------------- \n\n " +
-				"We detected an error while trying to signin [ %s ] at [ %s ],  " +
-				"detail message [ %s ], please fix it asap, thanks. \n\n" +
-				"---------------------------------------------------------- \n\n ",
-				authResult.authContext().site(), 
-				df().format(authResult.time()), 
-				authResult.detail()
-			)
-		);
+		simpleMessage.setSubject("认证监控系统错误提醒");
+		simpleMessage.setText(textOf(authResult));
 		return simpleMessage;
+	}
+
+	private String textOf(AuthResult authResult) {
+		return "您好, \n\n" +
+				"认证监控系统于 [ " + df().format(authResult.time()) + " ] " +
+				"尝试登录 [ " + authResult.authContext().site() +" ] 时发生错误, " +
+				"详细信息 [ " + authResult.detail() + " ], 请尽快联系人修复, 谢谢.";
 	}
 
 	private SimpleDateFormat df() {
