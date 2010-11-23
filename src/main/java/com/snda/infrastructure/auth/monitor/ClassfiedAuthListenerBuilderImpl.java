@@ -1,5 +1,7 @@
 package com.snda.infrastructure.auth.monitor;
 
+import com.google.common.base.Preconditions;
+
 public class ClassfiedAuthListenerBuilderImpl implements ClassfiedAuthListenerBuilder {
 
 	private final AuthListener authListener;
@@ -16,7 +18,12 @@ public class ClassfiedAuthListenerBuilderImpl implements ClassfiedAuthListenerBu
 
 	@Override
 	public ClassfiedAuthListener build() {
+		compile();
 		return new ClassfiedAuthListener(authListener, types);
+	}
+
+	private void compile() {
+		Preconditions.checkNotNull(types, "types required");
 	}
 
 }

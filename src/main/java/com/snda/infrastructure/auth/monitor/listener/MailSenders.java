@@ -1,4 +1,4 @@
-package com.snda.infrastructure.auth.monitor;
+package com.snda.infrastructure.auth.monitor.listener;
 
 import static com.snda.infrastructure.auth.monitor.Environment.$;
 

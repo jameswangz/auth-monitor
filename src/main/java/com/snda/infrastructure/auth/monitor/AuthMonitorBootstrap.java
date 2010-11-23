@@ -5,6 +5,7 @@ import static com.snda.infrastructure.auth.monitor.Environment.$;
 import com.google.common.base.Splitter;
 import com.googlecode.functionalcollections.FunctionalIterables;
 import com.snda.infrastructure.auth.monitor.listener.EmailListener;
+import com.snda.infrastructure.auth.monitor.listener.MailSenders;
 import com.snda.infrastructure.auth.monitor.listener.PersistenceListener;
 import com.snda.infrastructure.auth.monitor.plugin.qidian.QidianSeleniumMonitor;
 import com.snda.infrastructure.auth.monitor.selenium.SeleniumConfig;
