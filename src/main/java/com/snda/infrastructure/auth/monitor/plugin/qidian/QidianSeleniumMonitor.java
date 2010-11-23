@@ -26,8 +26,7 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 	public QidianSeleniumMonitor(
 		AuthContext authContext, 
 		SeleniumConfig seleniumConfig, 
-		String expectedText, 
-		String timeout) {
+		String expectedText) {
 		
 		this.authContext = authContext;
 		this.selenium = new DefaultSelenium(
@@ -36,8 +35,8 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 			seleniumConfig.browserStartCommand(), 
 			authContext.site()
 		);
+		this.timeout = seleniumConfig.timeout();
 		this.expectedText = expectedText;
-		this.timeout = timeout;
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class AuthMonitorBootstrap {
 	
 	public void start() {
 		Environment.initialize();
-		console.registerMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText(), timeout()));
+		console.registerMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText()));
 		console.registerListener(new PersistenceListener()).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
 		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.FAILED);
 		console.schedulerAt($("cron"));
@@ -39,7 +39,12 @@ public class AuthMonitorBootstrap {
 	}
 
 	private SeleniumConfig seneniumConfig() {
-		return new SeleniumConfig($("selenium.server.host"), Integer.parseInt($("selenium.server.port")), "*firefox");
+		return new SeleniumConfig(
+			$("selenium.server.host"), 
+			Integer.parseInt($("selenium.server.port")), 
+			"*firefox",
+			timeout()
+		);
 	}
 	
 	private String expectedText() {
