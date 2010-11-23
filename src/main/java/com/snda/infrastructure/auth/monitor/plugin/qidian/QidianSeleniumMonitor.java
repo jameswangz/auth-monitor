@@ -21,8 +21,14 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 	private final AuthContext authContext;
 	private final Selenium selenium;
 	private final String expectedText;
+	private final String timeout;
 
-	public QidianSeleniumMonitor(AuthContext authContext, SeleniumConfig seleniumConfig, String expectedText) {
+	public QidianSeleniumMonitor(
+		AuthContext authContext, 
+		SeleniumConfig seleniumConfig, 
+		String expectedText, 
+		String timeout) {
+		
 		this.authContext = authContext;
 		this.selenium = new DefaultSelenium(
 			seleniumConfig.serverHost(), 
@@ -30,8 +36,8 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 			seleniumConfig.browserStartCommand(), 
 			authContext.site()
 		);
-		this.selenium.setSpeed("2000");
 		this.expectedText = expectedText;
+		this.timeout = timeout;
 	}
 
 	@Override
@@ -43,15 +49,17 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		String detail = null;
 		
 		try {
+			selenium.setSpeed("2000");
+			selenium.setTimeout(timeout);
 			selenium.open("/");
 			selenium.type("ptname", authContext.username());
 			selenium.type("ptpwd", authContext.password());
 			selenium.click("btn_user_login");
-			selenium.waitForPageToLoad("50000");
+			selenium.waitForPageToLoad(timeout);
 			success = selenium.isTextPresent(expectedText);
 			if (success) {
 				selenium.click("link=退出");
-				selenium.waitForPageToLoad("50000");
+				selenium.waitForPageToLoad(timeout);
 			}
 		} catch (SeleniumException e) {
 			logger.error(e.getMessage(), e);

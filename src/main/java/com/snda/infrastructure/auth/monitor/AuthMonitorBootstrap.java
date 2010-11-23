@@ -19,11 +19,15 @@ public class AuthMonitorBootstrap {
 	
 	public void start() {
 		Environment.initialize();
-		console.registerMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText()));
+		console.registerMonitor(new QidianSeleniumMonitor(authContext(), seneniumConfig(), expectedText(), timeout()));
 		console.registerListener(new PersistenceListener()).on(AuthResultType.SUCCESS, AuthResultType.FAILED);
 		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.FAILED);
 		console.schedulerAt($("cron"));
 		console.start();
+	}
+
+	private String timeout() {
+		return $("page.timeout");
 	}
 	
 	public void stop() {
