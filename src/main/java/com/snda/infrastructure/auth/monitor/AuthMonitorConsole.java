@@ -2,7 +2,7 @@ package com.snda.infrastructure.auth.monitor;
 
 public interface AuthMonitorConsole {
 
-	AuthMonitorConsole registerMonitor(AuthMonitor monitor);
+	AuthMonitorWithContextBuilder registerMonitor(AuthMonitor monitor);
 	
 	ClassfiedAuthListenerBuilder registerListener(AuthListener authListener);
 

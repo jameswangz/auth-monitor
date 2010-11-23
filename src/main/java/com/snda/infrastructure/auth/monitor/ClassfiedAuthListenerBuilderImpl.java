@@ -14,6 +14,7 @@ public class ClassfiedAuthListenerBuilderImpl implements ClassfiedAuthListenerBu
 		this.types = types;
 	}
 
+	@Override
 	public ClassfiedAuthListener build() {
 		return new ClassfiedAuthListener(authListener, types);
 	}

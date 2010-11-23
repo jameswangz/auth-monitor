@@ -18,30 +18,27 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 
 	private static Logger logger = LoggerFactory.getLogger(QidianSeleniumMonitor.class);
 	
-	private final AuthContext authContext;
-	private final Selenium selenium;
+	private final SeleniumConfig seleniumConfig;
 	private final String expectedText;
-	private final String timeout;
 
 	public QidianSeleniumMonitor(
-		AuthContext authContext, 
 		SeleniumConfig seleniumConfig, 
 		String expectedText) {
+		this.seleniumConfig = seleniumConfig;
+		this.expectedText = expectedText;
+	}
+
+	@Override
+	public AuthResult execute(AuthContext authContext) {
+		Date time = new Date();
 		
-		this.authContext = authContext;
-		this.selenium = new DefaultSelenium(
+		Selenium selenium = new DefaultSelenium(
 			seleniumConfig.serverHost(), 
 			seleniumConfig.serverPort(), 
 			seleniumConfig.browserStartCommand(), 
 			authContext.site()
 		);
-		this.timeout = seleniumConfig.timeout();
-		this.expectedText = expectedText;
-	}
-
-	@Override
-	public AuthResult execute() {
-		Date time = new Date();
+		
 		selenium.start();
 		
 		boolean success = false;
@@ -49,16 +46,16 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		
 		try {
 			selenium.setSpeed("2000");
-			selenium.setTimeout(timeout);
+			selenium.setTimeout(seleniumConfig.timeout());
 			selenium.open("/");
 			selenium.type("ptname", authContext.username());
 			selenium.type("ptpwd", authContext.password());
 			selenium.click("btn_user_login");
-			selenium.waitForPageToLoad(timeout);
+			selenium.waitForPageToLoad(seleniumConfig.timeout());
 			success = selenium.isTextPresent(expectedText);
 			if (success) {
 				selenium.click("link=退出");
-				selenium.waitForPageToLoad(timeout);
+				selenium.waitForPageToLoad(seleniumConfig.timeout());
 			}
 		} catch (SeleniumException e) {
 			logger.error(e.getMessage(), e);
@@ -72,10 +69,10 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		
 		selenium.stop();
 		
-		return authResultOf(time, success, detail);
+		return authResultOf(authContext, time, success, detail);
 	}
 
-	private AuthResult authResultOf(Date time, boolean success, String detail) {
+	private AuthResult authResultOf(AuthContext authContext, Date time, boolean success, String detail) {
 		AuthResultType resultType = success ? AuthResultType.SUCCESS : AuthResultType.FAILED;
 		return new AuthResult(authContext, time, resultType, detail);
 	}

@@ -4,4 +4,6 @@ public interface ClassfiedAuthListenerBuilder {
 
 	void on(AuthResultType... types);
 
+	ClassfiedAuthListener build();
+	
 }

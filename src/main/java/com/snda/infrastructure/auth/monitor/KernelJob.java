@@ -13,11 +13,11 @@ public final class KernelJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		List<AuthMonitor> monitors = (List<AuthMonitor>) jobDataMap.get(AuthMonitorConsoleImpl.MONITORS_KEY);
+		List<AuthMonitorWithContext> monitors = (List<AuthMonitorWithContext>) jobDataMap.get(AuthMonitorConsoleImpl.MONITORS_KEY);
 		List<ClassfiedAuthListener> listeners = (List<ClassfiedAuthListener>) jobDataMap.get(AuthMonitorConsoleImpl.LISTENERS_KEY);
 		try {
-			for (AuthMonitor monitor : monitors) {
-				AuthResult result = monitor.execute();
+			for (AuthMonitorWithContext monitorWithContext : monitors) {
+				AuthResult result = monitorWithContext.execute();
 				for (ClassfiedAuthListener listener : listeners) {
 					if (listener.types().contains(result.resultType())) {
 						listener.authListener().onResult(result);

@@ -2,6 +2,10 @@ package com.snda.infrastructure.auth.monitor;
 
 public enum AuthResultType {
 	
-	SUCCESS, FAILED
+	SUCCESS, FAILED;
+
+	public static AuthResultType[] any() {
+		return AuthResultType.values();
+	}
 
 }

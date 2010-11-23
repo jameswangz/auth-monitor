@@ -1,6 +1,5 @@
 package com.snda.infrastructure.auth.monitor;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 
@@ -26,23 +26,24 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 	private SchedulerFactory schedFact = new StdSchedulerFactory();
 	private Scheduler scheduler;
 
-	private List<AuthMonitor> monitors = new ArrayList<AuthMonitor>();
 	private String cronExpression;
-	private List<ClassfiedAuthListenerBuilderImpl> builders = new ArrayList<ClassfiedAuthListenerBuilderImpl>();
-	private List<ClassfiedAuthListener> listeners = new ArrayList<ClassfiedAuthListener>();
+	private List<AuthMonitorWithContextBuilder> monitorBuilders = Lists.newArrayList();
+	private List<AuthMonitorWithContext> monitors = Lists.newArrayList();
+	private List<ClassfiedAuthListenerBuilder> listenerBuilders = Lists.newArrayList();
+	private List<ClassfiedAuthListener> listeners = Lists.newArrayList();
 
 	@Override
-	public AuthMonitorConsole registerMonitor(AuthMonitor monitor) {
-		this.monitors.add(monitor);
-		return this;
+	public AuthMonitorWithContextBuilder registerMonitor(AuthMonitor monitor) {
+		AuthMonitorWithContextBuilder monitorBuilder = new AuthMonitorWithContextBuilderImpl(monitor);
+		this.monitorBuilders.add(monitorBuilder);
+		return monitorBuilder;
 	}
 	
 	@Override
 	public ClassfiedAuthListenerBuilder registerListener(AuthListener authListener) {
-		ClassfiedAuthListenerBuilderImpl classfiedAuthListenerBuilderImpl 
-			= new ClassfiedAuthListenerBuilderImpl(authListener);
-		this.builders.add(classfiedAuthListenerBuilderImpl);
-		return classfiedAuthListenerBuilderImpl;
+		ClassfiedAuthListenerBuilder listenerBuilder = new ClassfiedAuthListenerBuilderImpl(authListener);
+		this.listenerBuilders.add(listenerBuilder);
+		return listenerBuilder;
 	}
 
 	@Override
@@ -53,10 +54,23 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 
 	@Override
 	public void start() {
+		buildMonitors();
 		buildListeners();
 		secheduleJob();
 	}
 
+	private void buildMonitors() {
+		for (AuthMonitorWithContextBuilder builder : monitorBuilders) {
+			this.monitors.add(builder.build());
+		}
+	}
+	
+	private void buildListeners() {
+		for (ClassfiedAuthListenerBuilder builder : listenerBuilders) {
+			this.listeners.add(builder.build());
+		}
+	}
+	
 	private void secheduleJob() {
 		try {
 			scheduler = schedFact.getScheduler();
@@ -70,13 +84,6 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 		} catch (Exception e) {
 			logger.error("Failed to start quartz job : " + e.getMessage(), e);
 			Throwables.propagate(e);
-		}
-	}
-
-	private void buildListeners() {
-		for (ClassfiedAuthListenerBuilderImpl impl : builders) {
-			ClassfiedAuthListener listener = impl.build();
-			this.listeners.add(listener);
 		}
 	}
 
