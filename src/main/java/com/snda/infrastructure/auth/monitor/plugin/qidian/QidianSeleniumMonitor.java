@@ -47,7 +47,8 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 		try {
 			selenium.setSpeed("2000");
 			selenium.setTimeout(seleniumConfig.timeout());
-			selenium.open("/");
+//			selenium.open("/");
+			selenium.open("/LoginFrame.asp?appDomain=qidian.com&CSSURL=http%3A%2F%2Fwww.qidian.com%2Fstyle%2FQidianOALoginBar1_1.css&returnURL=http%3A%2F%2Fwww.qidian.com%2FOALoginJump.aspx%3FreturnURL%3Dhttp%253A%252F%252Fwww.qidian.com%252F&curURL=http%3A%2F%2Fwww.qidian.com%2F&autologinchecked=0&autologintime=14");
 			selenium.type("ptname", authContext.username());
 			selenium.type("ptpwd", authContext.password());
 			selenium.click("btn_user_login");
@@ -55,7 +56,7 @@ public class QidianSeleniumMonitor implements AuthMonitor {
 			success = selenium.isTextPresent(expectedText);
 			if (success) {
 				selenium.click("link=退出");
-				selenium.waitForPageToLoad(seleniumConfig.timeout());
+//				selenium.waitForPageToLoad(seleniumConfig.timeout());
 			}
 		} catch (SeleniumException e) {
 			logger.error(e.getMessage(), e);

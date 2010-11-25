@@ -36,7 +36,7 @@ public class AuthMonitorBootstrap {
 	}
 	
 	private AuthContext authContext() {
-		return new AuthContext("http://www.qidian.com/", $("auth.username"), $("auth.password"));
+		return new AuthContext("http://www.sdo.com/", $("auth.username"), $("auth.password"));
 	}
 
 	private SeleniumConfig seneniumConfig() {
