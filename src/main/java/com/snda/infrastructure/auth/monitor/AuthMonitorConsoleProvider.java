@@ -32,7 +32,7 @@ public class AuthMonitorConsoleProvider {
 	}
 	
 	private AuthContext authContext() {
-		return new AuthContext("http://www.sdo.com/", $("auth.username"), $("auth.password"));
+		return new AuthContext("http://61.172.251.13/", $("auth.username"), $("auth.password"));
 	}
 
 	private SeleniumConfig seneniumConfig() {
