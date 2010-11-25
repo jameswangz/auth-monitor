@@ -24,7 +24,7 @@ public class AuthMonitorBootstrap {
 		console.registerListener(new PersistenceListener()).on(AuthResultType.any());
 		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.FAILED);
 		console.schedulerAt($("cron"));
-		console.start();
+		console.build().start();
 	}
 
 	private String timeout() {
@@ -43,7 +43,7 @@ public class AuthMonitorBootstrap {
 		return new SeleniumConfig(
 			$("selenium.server.host"), 
 			Integer.parseInt($("selenium.server.port")), 
-			"*firefox",
+			"*firefox3",
 			timeout()
 		);
 	}

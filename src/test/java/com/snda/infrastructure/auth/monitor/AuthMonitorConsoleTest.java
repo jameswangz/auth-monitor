@@ -14,7 +14,7 @@ import org.junit.Test;
 public class AuthMonitorConsoleTest {
 	
 	@Test
-	public void test() throws InterruptedException {
+	public void polling() throws InterruptedException {
 		AuthContext authContext = new AuthContext("http://www.qidian.com/", "sdotracker2010", "******");
 		AuthMonitorConsole console = new AuthMonitorConsoleImpl();
 		AuthMonitor qidianMonitor = mock(AuthMonitor.class);
@@ -34,12 +34,35 @@ public class AuthMonitorConsoleTest {
 		
 		when(qidianMonitor.execute(authContext)).thenReturn(authResult);
 		
-		console.start();
+		console.build().start();
 		TimeUnit.SECONDS.sleep(5);
 		console.stop();
 
 		verify(persistenceListener, atLeastOnce()).onResult(authResult);
 		verify(emailListener, atLeastOnce()).onResult(authResult);
+	}
+
+	@Test
+	public void eventDriven() {
+		AuthContext authContext = new AuthContext("http://www.qidian.com/", "sdotracker2010", "******");
+		AuthMonitorConsole console = new AuthMonitorConsoleImpl();
+		AuthMonitor qidianMonitor = mock(AuthMonitor.class);
+		console.registerMonitor(qidianMonitor).with(authContext);
+		AuthListener persistenceListener = mock(AuthListener.class);
+		console.registerListener(persistenceListener).on(AuthResultType.any());
+		
+		AuthResult authResult = new AuthResult(
+			authContext,
+			new Date(), 
+			AuthResultType.SUCCESS,
+			null
+		);
+		
+		when(qidianMonitor.execute(authContext)).thenReturn(authResult);
+		
+		console.build().fireNow();
+		
+		verify(persistenceListener).onResult(authResult);
 	}
 	
 }

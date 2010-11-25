@@ -7,9 +7,13 @@ public interface AuthMonitorConsole {
 	ClassfiedAuthListenerBuilder registerListener(AuthListener authListener);
 
 	AuthMonitorConsole schedulerAt(String cronExpression);
+	
+	AuthMonitorConsole build();
 
 	void start();
 
 	void stop();
+
+	void fireNow();
 
 }
