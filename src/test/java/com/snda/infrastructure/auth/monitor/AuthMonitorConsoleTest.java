@@ -43,7 +43,7 @@ public class AuthMonitorConsoleTest {
 	}
 
 	@Test
-	public void eventDriven() {
+	public void eventDriven() throws InterruptedException {
 		AuthContext authContext = new AuthContext("http://www.qidian.com/", "sdotracker2010", "******");
 		AuthMonitorConsole console = new AuthMonitorConsoleImpl();
 		AuthMonitor qidianMonitor = mock(AuthMonitor.class);
@@ -61,6 +61,8 @@ public class AuthMonitorConsoleTest {
 		when(qidianMonitor.execute(authContext)).thenReturn(authResult);
 		
 		console.build().fireNow();
+		
+		TimeUnit.SECONDS.sleep(1);
 		
 		verify(persistenceListener).onResult(authResult);
 	}

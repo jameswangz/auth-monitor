@@ -8,7 +8,17 @@
 	<listener>
 		<listener-class>com.snda.infrastructure.auth.monitor.web.listener.BootstrapListener</listener-class>
 	</listener>
-        
+    
+    <servlet>
+    	<servlet-name>FireNowServlet</servlet-name>
+    	<servlet-class>com.snda.infrastructure.auth.monitor.web.servlet.FireNowServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+    	<servlet-name>FireNowServlet</servlet-name>
+    	<url-pattern>/firenow</url-pattern>
+    </servlet-mapping>
+    
     <welcome-file-list>
     	<welcome-file>index.html</welcome-file>
     </welcome-file-list>    

@@ -10,29 +10,25 @@ import com.snda.infrastructure.auth.monitor.listener.PersistenceListener;
 import com.snda.infrastructure.auth.monitor.plugin.qidian.QidianSeleniumMonitor;
 import com.snda.infrastructure.auth.monitor.selenium.SeleniumConfig;
 
-public class AuthMonitorBootstrap {
+public class AuthMonitorConsoleProvider {
 
 	private AuthMonitorConsole console = new AuthMonitorConsoleImpl();
 	
 	public static void main(String[] args) {
-		new AuthMonitorBootstrap().start();
+		new AuthMonitorConsoleProvider().get().start();
 	}
 	
-	public void start() {
+	public AuthMonitorConsole get() {
 		Environment.initialize();
 		console.registerMonitor(new QidianSeleniumMonitor(seneniumConfig(), expectedText())).with(authContext());
 		console.registerListener(new PersistenceListener()).on(AuthResultType.any());
 		console.registerListener(new EmailListener(MailSenders.create(), from(), receptionist())).on(AuthResultType.FAILED);
 		console.schedulerAt($("cron"));
-		console.build().start();
+		return console.build();
 	}
 
 	private String timeout() {
 		return $("page.timeout");
-	}
-	
-	public void stop() {
-		console.stop();
 	}
 	
 	private AuthContext authContext() {

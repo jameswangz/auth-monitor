@@ -2,6 +2,8 @@ package com.snda.infrastructure.auth.monitor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
@@ -31,7 +33,10 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 	private List<AuthMonitorWithContext> monitors = Lists.newArrayList();
 	private List<ClassfiedAuthListenerBuilder> listenerBuilders = Lists.newArrayList();
 	private List<ClassfiedAuthListener> listeners = Lists.newArrayList();
-
+	
+	private Executor eventExecutor = Executors.newSingleThreadExecutor();
+	
+	
 	@Override
 	public AuthMonitorWithContextBuilder registerMonitor(AuthMonitor monitor) {
 		AuthMonitorWithContextBuilder monitorBuilder = new AuthMonitorWithContextBuilderImpl(monitor);
@@ -126,7 +131,7 @@ public class AuthMonitorConsoleImpl implements AuthMonitorConsole {
 	@Override
 	public void fireNow() {
 		checkBuilt();
-		command().run();
+		eventExecutor.execute(command());
 	}
 
 
